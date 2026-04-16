@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Kebutuhan CCTV Regional</title>
+    <title>Dashboard Kebutuhan CCTV Region 1 Medan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -248,17 +248,16 @@
         
         // =========================================================================
         // PENGATURAN SISTEM (HARDCODED)
-        // Ganti URL di bawah ini dengan URL Web App Google Apps Script Anda.
+        // URL Endpoint API Google Apps Script telah dilock untuk stabilitas.
         // =========================================================================
         const gasEndpoint = 'https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec'; 
-        // Contoh: const gasEndpoint = 'https://script.google.com/macros/s/AKfycby.../exec';
         
         // Initialize App
         document.addEventListener('DOMContentLoaded', () => {
-            if (gasEndpoint && gasEndpoint !== 'https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec') {
+            if (gasEndpoint) {
                 if(appData.length === 0) fetchData();
             } else {
-                showNotification('Konfigurasi Dibutuhkan', 'Harap konfigurasikan URL GAS pada source code (variabel gasEndpoint) terlebih dahulu.', 'warning');
+                showNotification('Error Kritis', 'Sistem gagal memuat URL Endpoint.', 'error');
             }
         });
 
@@ -290,7 +289,7 @@
 
         // Fetch Data from GAS
         async function fetchData() {
-            if (!gasEndpoint || gasEndpoint === 'https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec') {
+            if (!gasEndpoint) {
                 showNotification('Error', 'Sistem membutuhkan URL Backend pada variabel gasEndpoint di source code.', 'error');
                 return;
             }
