@@ -64,10 +64,7 @@
                 <i class="fas fa-table w-5 text-center"></i>
                 <span>Data Kebutuhan</span>
             </a>
-            <a href="#" onclick="switchTab('settings')" class="nav-btn flex items-center space-x-3 w-full p-3 rounded-lg hover:bg-brand-800 text-slate-300 hover:text-white transition-colors">
-                <i class="fas fa-cog w-5 text-center"></i>
-                <span>Pengaturan Sistem</span>
-            </a>
+            <!-- Tab Pengaturan Sistem telah dihapus dari antarmuka -->
         </nav>
         <div class="p-4 border-t border-brand-800 text-xs text-brand-500 text-center">
             Sistem Manajemen v2.0
@@ -200,7 +197,7 @@
                             </thead>
                             <tbody class="text-sm divide-y divide-slate-100" id="table-body">
                                 <tr>
-                                    <td colspan="5" class="p-8 text-center text-slate-500">Belum ada data. Silakan atur Web App URL di Pengaturan dan lakukan Sinkronisasi.</td>
+                                    <td colspan="5" class="p-8 text-center text-slate-500">Belum ada data. Sistem sedang menyinkronkan data...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -211,39 +208,7 @@
                 </div>
             </div>
 
-            <!-- Tab: Settings -->
-            <div id="tab-settings" class="tab-content hidden">
-                <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-slate-100 p-6">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6">Konfigurasi Google Apps Script</h2>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">URL Web App Google Apps Script</label>
-                            <input type="url" id="gas-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono text-sm">
-                            <p class="mt-2 text-xs text-slate-500">Masukkan URL hasil Deploy Web App dari Google Apps Script Anda.</p>
-                        </div>
-                        
-                        <div class="pt-4 border-t border-slate-100">
-                            <button onclick="saveSettings()" class="w-full md:w-auto px-6 py-3 bg-brand-600 text-white font-medium rounded-lg hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 transition-colors">
-                                Simpan Konfigurasi
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="mt-10 bg-slate-50 p-6 rounded-lg border border-slate-200 text-sm text-slate-700">
-                        <h3 class="font-bold mb-3"><i class="fas fa-info-circle text-brand-500 mr-2"></i>Instruksi Pemasangan Backend</h3>
-                        <ol class="list-decimal pl-5 space-y-2">
-                            <li>Buka Google Spreadsheet yang berisi data CCTV Anda.</li>
-                            <li>Pilih menu <strong>Ekstensi</strong> > <strong>Apps Script</strong>.</li>
-                            <li>Hapus kode yang ada, lalu *paste* kode <code>Code.gs</code> yang diberikan oleh AI.</li>
-                            <li>Klik tombol <strong>Terapkan (Deploy)</strong> > <strong>Deployment Baru</strong>.</li>
-                            <li>Pilih jenis <strong>Aplikasi Web (Web App)</strong>.</li>
-                            <li>Set Akses ke <strong>"Siapa saja" (Anyone)</strong> agar *frontend* ini bisa membaca datanya.</li>
-                            <li>Klik Terapkan, salin URL yang muncul, dan tempelkan ke kolom input di atas.</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
+            <!-- Tab Pengaturan telah dihapus dari antarmuka -->
 
         </div>
     </main>
@@ -280,17 +245,20 @@
     <script>
         // State Management
         let appData = [];
-        let gasEndpoint = localStorage.getItem('cctv_gas_url') || '';
+        
+        // =========================================================================
+        // PENGATURAN SISTEM (HARDCODED)
+        // Ganti URL di bawah ini dengan URL Web App Google Apps Script Anda.
+        // =========================================================================
+        const gasEndpoint = 'https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec'; 
+        // Contoh: const gasEndpoint = 'https://script.google.com/macros/s/AKfycby.../exec';
         
         // Initialize App
         document.addEventListener('DOMContentLoaded', () => {
-            if (gasEndpoint) {
-                document.getElementById('gas-url').value = gasEndpoint;
-                // Auto fetch if URL exists
+            if (gasEndpoint && gasEndpoint !== 'https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec') {
                 if(appData.length === 0) fetchData();
             } else {
-                switchTab('settings');
-                showNotification('Peringatan', 'Harap masukkan URL Google Apps Script terlebih dahulu.', 'warning');
+                showNotification('Konfigurasi Dibutuhkan', 'Harap konfigurasikan URL GAS pada source code (variabel gasEndpoint) terlebih dahulu.', 'warning');
             }
         });
 
@@ -315,34 +283,15 @@
             // Set Title
             const titles = {
                 'dashboard': 'Dashboard Analitik',
-                'data': 'Basis Data Kebutuhan',
-                'settings': 'Pengaturan Sistem'
+                'data': 'Basis Data Kebutuhan'
             };
             document.getElementById('page-title').innerText = titles[tabId];
         }
 
-        // Save Settings
-        function saveSettings() {
-            const urlInput = document.getElementById('gas-url').value.trim();
-            if(!urlInput || !urlInput.startsWith('https://script.google.com/')) {
-                showNotification('Error', 'Format URL tidak valid. Harus dimulai dengan https://script.google.com/', 'error');
-                return;
-            }
-            
-            gasEndpoint = urlInput;
-            localStorage.setItem('cctv_gas_url', gasEndpoint);
-            showNotification('Sukses', 'Konfigurasi berhasil disimpan.', 'success');
-            
-            // Automatically fetch data after saving
-            fetchData();
-            switchTab('dashboard');
-        }
-
         // Fetch Data from GAS
         async function fetchData() {
-            if (!gasEndpoint) {
-                switchTab('settings');
-                showNotification('Error', 'Sistem membutuhkan URL Backend untuk melakukan sinkronisasi.', 'error');
+            if (!gasEndpoint || gasEndpoint === 'https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec') {
+                showNotification('Error', 'Sistem membutuhkan URL Backend pada variabel gasEndpoint di source code.', 'error');
                 return;
             }
 
@@ -353,8 +302,6 @@
             loadingState.classList.remove('hidden');
 
             try {
-                // Using NO-CORS mode is problematic for reading JSON response in JS directly.
-                // GAS should return proper CORS headers if configured correctly as Web App.
                 const response = await fetch(gasEndpoint, {
                     method: 'GET',
                     headers: { 'Accept': 'application/json' }
