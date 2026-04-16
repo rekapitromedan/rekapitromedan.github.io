@@ -301,7 +301,7 @@
             document.getElementById('display-endpoint').innerText = APP_URL;
             
             // Validasi URL dan Autoload
-            if (APP_URL !== "https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec" && APP_URL.startsWith('https://script.google.com/')) {
+            if (APP_URL !== "https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec" && APP_URL.startsWith('https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec')) {
                 if(appData.length === 0) {
                     switchTab('dashboard');
                     fetchData();
@@ -341,7 +341,7 @@
 
         // Fetch Data dari GAS Endpoint (Hardcoded)
         async function fetchData() {
-            if (APP_URL === "https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec" || !APP_URL.startsWith('https://script.google.com/')) {
+            if (APP_URL === "https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec" || !APP_URL.startsWith('https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec')) {
                 switchTab('settings');
                 showNotification('Sinkronisasi Digagalkan', 'Sistem tidak dapat sinkronisasi. URL Endpoint belum dikonfigurasi pada source code.', 'error');
                 return;
