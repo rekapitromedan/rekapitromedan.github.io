@@ -66,7 +66,7 @@
             </a>
             <a href="#" onclick="switchTab('settings')" class="nav-btn flex items-center space-x-3 w-full p-3 rounded-lg hover:bg-brand-800 text-slate-300 hover:text-white transition-colors">
                 <i class="fas fa-cog w-5 text-center"></i>
-                <span>Pengaturan Sistem</span>
+                <span>Informasi Sistem</span>
             </a>
         </nav>
         <div class="p-4 border-t border-brand-800 text-xs text-brand-500 text-center">
@@ -200,7 +200,7 @@
                             </thead>
                             <tbody class="text-sm divide-y divide-slate-100" id="table-body">
                                 <tr>
-                                    <td colspan="5" class="p-8 text-center text-slate-500">Belum ada data. Silakan atur Web App URL di Pengaturan dan lakukan Sinkronisasi.</td>
+                                    <td colspan="5" class="p-8 text-center text-slate-500">Belum ada data. Silakan pastikan variabel APP_URL sudah dikonfigurasi di source code.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -211,39 +211,41 @@
                 </div>
             </div>
 
-            <!-- Tab: Settings -->
+            <!-- Tab: Settings (Kini Hanya Informasi) -->
             <div id="tab-settings" class="tab-content hidden">
                 <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-slate-100 p-6">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6">Konfigurasi Google Apps Script</h2>
+                    <h2 class="text-xl font-bold text-slate-800 mb-6">Status Konfigurasi Sistem</h2>
                     
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">URL Web App Google Apps Script</label>
-                            <input type="url" id="gas-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono text-sm">
-                            <p class="mt-2 text-xs text-slate-500">Masukkan URL hasil Deploy Web App dari Google Apps Script Anda.</p>
-                            
-                            <div class="mt-3 p-3 bg-blue-50 border-l-4 border-blue-500 text-sm text-blue-800" id="hardcode-status-msg" style="display: none;">
-                                <i class="fas fa-info-circle mr-2"></i>URL saat ini sudah dikonfigurasi langsung (Hardcode) di dalam file *source code*. Jika ingin mengubahnya, silakan ubah kode HTML Anda.
-                            </div>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg">
+                            <p class="text-sm text-slate-500 mb-2">Endpoint API Google Apps Script Saat Ini:</p>
+                            <code class="block w-full p-3 bg-white border border-slate-200 rounded text-brand-600 font-mono text-xs break-all" id="display-endpoint">
+                                Memuat konfigurasi...
+                            </code>
                         </div>
                         
-                        <div class="pt-4 border-t border-slate-100">
-                            <button onclick="saveSettings()" id="save-btn" class="w-full md:w-auto px-6 py-3 bg-brand-600 text-white font-medium rounded-lg hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 transition-colors">
-                                Simpan Konfigurasi UI
-                            </button>
+                        <div class="p-4 bg-amber-50 border-l-4 border-amber-500 text-amber-800 text-sm rounded-r-lg shadow-sm">
+                            <div class="flex items-start">
+                                <i class="fas fa-lock mt-1 mr-3 text-amber-500"></i>
+                                <div>
+                                    <h4 class="font-bold mb-1">Konfigurasi UI Dinonaktifkan</h4>
+                                    <p class="opacity-90 leading-relaxed">Demi alasan keamanan dan konsistensi operasional, konfigurasi URL telah <strong>dikunci langsung (hardcoded) ke dalam kode sumber (source code)</strong>. Formulir input telah ditiadakan.</p>
+                                    <p class="mt-2 opacity-90">Untuk mengubah URL, buka file <code>index.html</code> dan ubah string pada variabel <code>const APP_URL = "..."</code>.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mt-10 bg-slate-50 p-6 rounded-lg border border-slate-200 text-sm text-slate-700">
+                    <div class="mt-8 bg-slate-50 p-6 rounded-lg border border-slate-200 text-sm text-slate-700">
                         <h3 class="font-bold mb-3"><i class="fas fa-info-circle text-brand-500 mr-2"></i>Instruksi Pemasangan Backend</h3>
                         <ol class="list-decimal pl-5 space-y-2">
                             <li>Buka Google Spreadsheet yang berisi data CCTV Anda.</li>
                             <li>Pilih menu <strong>Ekstensi</strong> > <strong>Apps Script</strong>.</li>
-                            <li>Hapus kode yang ada, lalu *paste* kode <code>Code.gs</code> yang diberikan oleh AI.</li>
+                            <li>Hapus kode yang ada, lalu *paste* kode <code>Code.gs</code> yang diberikan oleh Penasihat AI.</li>
                             <li>Klik tombol <strong>Terapkan (Deploy)</strong> > <strong>Deployment Baru</strong>.</li>
                             <li>Pilih jenis <strong>Aplikasi Web (Web App)</strong>.</li>
                             <li>Set Akses ke <strong>"Siapa saja" (Anyone)</strong> agar *frontend* ini bisa membaca datanya.</li>
-                            <li>Klik Terapkan, salin URL yang muncul, lalu ubah variabel <code>APP_URL</code> di dalam *source code* HTML Anda.</li>
+                            <li>Klik Terapkan, salin URL yang muncul, lalu ubah variabel <code>APP_URL</code> di baris bawah kode <code>index.html</code> ini.</li>
                         </ol>
                     </div>
                 </div>
@@ -286,38 +288,27 @@
         let appData = [];
         
         // ==============================================================================
-        // KONFIGURASI URL SISTEM (HARDCODE DI SINI)
+        // KONFIGURASI STRATEGIS: ENDPOINT SISTEM
         // ==============================================================================
-        // UBAH STRING "MASUKKAN_URL_ANDA_DISINI" DENGAN URL WEB APP GOOGLE APPS SCRIPT
+        // UBAH STRING DI BAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
         // Contoh: const APP_URL = "https://script.google.com/macros/s/AKfycb.../exec";
         // ==============================================================================
         const APP_URL = "https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec"; 
         
-        // Logika untuk mendeteksi apakah pengguna sudah melakukan hardcoding atau belum
-        const isHardcoded = APP_URL !== "https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec" && APP_URL.trim() !== "";
-        let gasEndpoint = isHardcoded ? APP_URL : (localStorage.getItem('cctv_gas_url') || '');
-        
         // Initialize App
         document.addEventListener('DOMContentLoaded', () => {
-            if (gasEndpoint) {
-                document.getElementById('gas-url').value = gasEndpoint;
-                
-                // Kunci input jika menggunakan sistem hardcode agar tidak bingung
-                if(isHardcoded) {
-                    document.getElementById('gas-url').setAttribute('readonly', 'true');
-                    document.getElementById('gas-url').classList.add('bg-slate-100', 'text-slate-500');
-                    document.getElementById('hardcode-status-msg').style.display = 'block';
-                    document.getElementById('save-btn').style.display = 'none';
-                }
-
-                // Auto fetch if URL exists
+            // Tampilkan URL ke antarmuka Informasi Sistem
+            document.getElementById('display-endpoint').innerText = APP_URL;
+            
+            // Validasi URL dan Autoload
+            if (APP_URL !== "https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec" && APP_URL.startsWith('https://script.google.com/')) {
                 if(appData.length === 0) {
                     switchTab('dashboard');
                     fetchData();
                 }
             } else {
                 switchTab('settings');
-                showNotification('Konfigurasi Diperlukan', 'Harap masukkan URL Google Apps Script langsung pada Source Code (baris variabel APP_URL).', 'warning');
+                showNotification('Tindakan Diperlukan', 'Harap masukkan URL Google Apps Script yang valid pada variabel APP_URL di dalam source code.', 'warning');
             }
         });
 
@@ -343,38 +334,16 @@
             const titles = {
                 'dashboard': 'Dashboard Analitik',
                 'data': 'Basis Data Kebutuhan',
-                'settings': 'Pengaturan Sistem'
+                'settings': 'Informasi & Status Sistem'
             };
             document.getElementById('page-title').innerText = titles[tabId];
         }
 
-        // Save Settings (Hanya berfungsi jika tidak di-hardcode)
-        function saveSettings() {
-            if(isHardcoded) {
-                showNotification('Informasi', 'Sistem menggunakan URL yang ter-hardcode. Perubahan UI tidak berlaku.', 'info');
-                return;
-            }
-
-            const urlInput = document.getElementById('gas-url').value.trim();
-            if(!urlInput || !urlInput.startsWith('https://script.google.com/')) {
-                showNotification('Error', 'Format URL tidak valid. Harus dimulai dengan https://script.google.com/', 'error');
-                return;
-            }
-            
-            gasEndpoint = urlInput;
-            localStorage.setItem('cctv_gas_url', gasEndpoint);
-            showNotification('Sukses', 'Konfigurasi berhasil disimpan.', 'success');
-            
-            // Automatically fetch data after saving
-            fetchData();
-            switchTab('dashboard');
-        }
-
-        // Fetch Data from GAS
+        // Fetch Data dari GAS Endpoint (Hardcoded)
         async function fetchData() {
-            if (!gasEndpoint || gasEndpoint === "https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec") {
+            if (APP_URL === "https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec" || !APP_URL.startsWith('https://script.google.com/')) {
                 switchTab('settings');
-                showNotification('Error', 'Sistem membutuhkan URL Backend untuk melakukan sinkronisasi.', 'error');
+                showNotification('Sinkronisasi Digagalkan', 'Sistem tidak dapat sinkronisasi. URL Endpoint belum dikonfigurasi pada source code.', 'error');
                 return;
             }
 
@@ -385,19 +354,18 @@
             loadingState.classList.remove('hidden');
 
             try {
-                // Fetch data using App Script endpoint
-                const response = await fetch(gasEndpoint, {
+                // Proses Fetching menggunakan endpoint tunggal (APP_URL)
+                const response = await fetch(APP_URL, {
                     method: 'GET',
                     headers: { 'Accept': 'application/json' }
                 });
                 
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) throw new Error('Respons jaringan menolak akses (Network response was not ok)');
                 
                 const result = await response.json();
                 
                 if (result.status === 'success') {
-                    // MENGHITUNG ULANG TOTAL KEBUTUHAN SECARA DINAMIS
-                    // Safeguard untuk memastikan total di sistem selalu akurat berdasarkan penjumlahan area
+                    // Kalkulasi ulang Total Kebutuhan secara dinamis untuk mencegah error manusia di Spreadsheet
                     appData = result.data.map(row => {
                         const total = [
                             row.AreaParkir, row.BankingHall, row.RuangTeller, row.RuangCS,
@@ -417,11 +385,11 @@
                     document.getElementById('kpi-last-sync').innerText = now.toLocaleTimeString('id-ID') + ' WIB';
                     showNotification('Sinkronisasi Selesai', `${appData.length} baris data berhasil dimuat.`, 'success');
                 } else {
-                    throw new Error(result.message || 'Unknown error from server');
+                    throw new Error(result.message || 'Error tidak diketahui dari server Apps Script');
                 }
             } catch (error) {
                 console.error('Fetch Error:', error);
-                showNotification('Gagal Memuat Data', 'Pastikan URL benar dan Akses Web App di-set ke "Siapa saja".', 'error');
+                showNotification('Gagal Memuat Data', 'Koneksi ditolak. Pastikan URL benar dan Akses Web App Google di-set ke "Siapa saja".', 'error');
             } finally {
                 syncIcon.classList.remove('fa-spin');
                 loadingState.classList.add('hidden');
