@@ -3,974 +3,468 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Form Kebutuhan CCTV Region 1 Medan</title>
+    <title>Pencatatan Kripik Ubi Pedas</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Library Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        // Tema Warna BRI
-                        brand: {
-                            50: '#eef2ff',   // Sangat terang (Background aksen)
-                            100: '#dce6f5',  // Terang
-                            500: '#0B56A6',  // BRI Primary Blue
-                            600: '#084382',  // Hover Blue
-                            800: '#052b54',  // Active Sidebar Item
-                            900: '#031c36',  // Sidebar Background
-                        },
-                        accent: {
-                            50: '#fff7ed',
-                            100: '#ffedd5',
-                            500: '#F37021',  // BRI Primary Orange (Highlight/Action)
-                            600: '#d95c16',  // Hover Orange
-                        }
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                        'slide-up': 'slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { opacity: '0', transform: 'translateY(10px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Tambahan Library untuk konversi HTML ke PNG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #0B56A6; }
-        
-        .loader {
-            border-top-color: #F37021;
-            -webkit-animation: spinner 1s linear infinite;
-            animation: spinner 1s linear infinite;
-        }
-        @keyframes spinner {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Sidebar Transition Logic */
-        .sidebar-text {
-            transition: opacity 0.2s, width 0.3s;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-        .sidebar-minimized .sidebar-text {
-            opacity: 0;
-            width: 0;
-            margin-left: 0;
-        }
-        .sidebar-minimized .nav-btn {
-            justify-content: center;
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
-        }
-        .sidebar-minimized .sidebar-header {
-            justify-content: center;
-        }
-        
-        /* Modern Table Hover */
-        tr.group:hover td {
-            background-color: #f8fafc;
-        }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased h-screen flex overflow-hidden">
+<body class="bg-slate-50 text-slate-800 font-sans h-[100dvh] flex flex-col overflow-hidden">
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="w-64 bg-brand-900 text-white flex flex-col transition-all duration-300 ease-in-out z-30 relative hidden md:flex border-r border-brand-800 shadow-xl">
-        <!-- Toggle Button -->
-        <button onclick="toggleSidebar()" class="absolute -right-3 top-7 bg-accent-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-accent-600 transition-colors z-40 transform hover:scale-110">
-            <i class="fas fa-chevron-left text-xs transition-transform duration-300" id="toggle-icon"></i>
-        </button>
-
-        <!-- Header -->
-        <div class="sidebar-header p-6 flex items-center h-20 border-b border-brand-800 transition-all duration-300">
-            <div class="bg-white p-2 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-video text-brand-600"></i>
-            </div>
-            <span class="sidebar-text text-xl font-bold tracking-wide ml-3">
-                CCTV<span class="text-accent-500">SYS</span>
-            </span>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="flex-1 p-4 space-y-2 overflow-y-auto overflow-x-hidden mt-2">
-            <!-- Menambahkan tooltip native menggunakan atribut title ketika minimized -->
-            <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" title="Dashboard" class="nav-btn active flex items-center space-x-3 w-full p-3 rounded-lg bg-brand-800 border-l-4 border-accent-500 text-white transition-all duration-200 group">
-                <i class="fas fa-chart-pie w-5 text-center text-accent-500 group-hover:scale-110 transition-transform"></i>
-                <span class="sidebar-text font-medium">Dashboard</span>
-            </a>
-            <a href="#" onclick="switchTab('data')" id="nav-data" title="Data Kebutuhan" class="nav-btn flex items-center space-x-3 w-full p-3 rounded-lg border-l-4 border-transparent hover:bg-brand-800 text-slate-300 hover:text-white transition-all duration-200 group">
-                <i class="fas fa-table w-5 text-center group-hover:text-accent-500 group-hover:scale-110 transition-transform"></i>
-                <span class="sidebar-text font-medium">Data Kebutuhan</span>
-            </a>
-        </nav>
-
-        <!-- Footer -->
-        <div class="p-4 border-t border-brand-800 flex items-center justify-center transition-all duration-300 h-16">
-            <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center font-bold text-xs flex-shrink-0 border-2 border-brand-500">
-                AD
-            </div>
-            <div class="sidebar-text ml-3 flex flex-col">
-                <span class="text-xs font-bold text-white leading-tight">Admin Regional</span>
-                <span class="text-[10px] text-slate-400">v2.1 UI Modern</span>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-screen overflow-hidden relative w-full transition-all duration-300">
-        <!-- Header Topbar -->
-        <header class="bg-white shadow-sm z-10 p-4 flex justify-between items-center border-b border-slate-200">
-            <div class="flex items-center space-x-4">
-                <button class="md:hidden text-slate-500 hover:text-brand-600 p-2 rounded-md hover:bg-slate-100 transition-colors">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-                <div class="flex flex-col">
-                    <h1 id="page-title" class="text-xl font-bold text-slate-800 leading-tight">Dashboard Analitik</h1>
-                    <span class="text-xs text-slate-500 font-medium">PT Bank Rakyat Indonesia (Persero) Tbk.</span>
+    <!-- HEADER & DASHBOARD STATS -->
+    <header class="bg-orange-600 text-white shadow-md z-10 flex-none">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="p-2 bg-white/20 rounded-lg shrink-0">
+                    <i class="ph ph-fire text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide">Buku Pesanan</h1>
+                    <p class="text-orange-200 text-sm">Kripik Ubi Pedas - Rp 50.000/Kg</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-4">
-                <button onclick="fetchData()" class="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-600 shadow-sm shadow-accent-500/30 transition-all duration-200 text-sm font-bold flex items-center transform hover:-translate-y-0.5">
-                    <i class="fas fa-sync-alt mr-2" id="sync-icon"></i> <span class="hidden sm:inline">Sinkronisasi</span>
-                </button>
-            </div>
-        </header>
 
-        <!-- Content Area -->
-        <div class="flex-1 overflow-y-auto p-4 sm:p-6 scroll-smooth bg-slate-50" id="main-scroll-area">
+            <!-- Key Metrics -->
+            <div class="flex gap-4 w-full md:w-auto">
+                <div class="bg-orange-700/50 px-4 py-3 md:py-2 rounded-lg flex-1 md:flex-none text-center md:text-left shadow-inner md:shadow-none">
+                    <p class="text-orange-200 text-xs font-semibold uppercase">Total Volume Terjual</p>
+                    <p class="text-xl md:text-2xl font-bold" id="stat-total-kg">0 Kg</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden max-w-7xl mx-auto w-full">
+        
+        <!-- FORM INPUT PESANAN -->
+        <aside class="w-full md:w-[350px] lg:w-[400px] bg-white border-b md:border-b-0 md:border-r border-slate-200 p-5 md:p-6 md:overflow-y-auto shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-0 flex-none">
+            <h2 class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2 border-b pb-2">
+                <i class="ph ph-plus-circle text-orange-600"></i> Tambah Pesanan
+            </h2>
             
-            <!-- Loading State -->
-            <div id="loading-state" class="hidden absolute inset-0 bg-white/90 z-50 flex flex-col items-center justify-center backdrop-blur-sm transition-opacity">
-                <div class="loader ease-linear rounded-full border-4 border-t-4 border-slate-200 h-16 w-16 mb-6 shadow-lg"></div>
-                <h2 class="text-center text-brand-900 text-2xl font-bold tracking-tight">Menyinkronkan Data...</h2>
-                <p class="text-center text-slate-500 mt-2 max-w-md">Menghubungkan ke Google Workspace dan mengagregasi data Kanca Induk secara real-time.</p>
-            </div>
-
-            <!-- Tab: Dashboard -->
-            <div id="tab-dashboard" class="tab-content animate-fade-in space-y-6">
-                
-                <!-- KPI Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 border border-slate-100 flex items-center justify-between relative overflow-hidden group">
-                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-brand-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-                        <div class="relative z-10">
-                            <p class="text-sm font-semibold text-slate-500 mb-1">Total Kebutuhan</p>
-                            <h3 class="text-3xl font-black text-brand-900" id="kpi-total-kamera">0</h3>
-                        </div>
-                        <div class="relative z-10 h-14 w-14 rounded-2xl bg-brand-100 flex items-center justify-center text-brand-600 shadow-inner">
-                            <i class="fas fa-video text-2xl"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 border border-slate-100 flex items-center justify-between relative overflow-hidden group">
-                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-                        <div class="relative z-10">
-                            <p class="text-sm font-semibold text-slate-500 mb-1">Total Unit Kerja</p>
-                            <h3 class="text-3xl font-black text-brand-900" id="kpi-total-unit">0</h3>
-                        </div>
-                        <div class="relative z-10 h-14 w-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-inner">
-                            <i class="fas fa-building text-2xl"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 border border-slate-100 flex items-center justify-between relative overflow-hidden group">
-                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-accent-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-                        <div class="relative z-10">
-                            <p class="text-sm font-semibold text-slate-500 mb-1">Kanca Terlibat</p>
-                            <h3 class="text-3xl font-black text-brand-900" id="kpi-total-kanca">0</h3>
-                        </div>
-                        <div class="relative z-10 h-14 w-14 rounded-2xl bg-accent-100 flex items-center justify-center text-accent-600 shadow-inner">
-                            <i class="fas fa-sitemap text-2xl"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 border border-slate-100 flex items-center justify-between relative overflow-hidden">
-                        <div class="relative z-10">
-                            <p class="text-sm font-semibold text-slate-500 mb-1">Status Sistem</p>
-                            <div class="flex items-center mt-2">
-                                <span class="relative flex h-3 w-3 mr-2">
-                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                  <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                                </span>
-                                <h3 class="text-sm font-bold text-emerald-600" id="kpi-last-sync">Belum Sinkron</h3>
-                            </div>
-                        </div>
-                        <div class="relative z-10 h-14 w-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
-                            <i class="fas fa-server text-xl"></i>
-                        </div>
-                    </div>
+            <form id="order-form" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">Nama Pelanggan</label>
+                    <input type="text" id="input-name" required placeholder="Contoh: Budi" 
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all">
                 </div>
 
-                <!-- Main Layout Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Top Areas Chart -->
-                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-lg font-bold text-brand-900 border-l-4 border-accent-500 pl-3">Distribusi per Area (Top 5)</h3>
-                            <i class="fas fa-chart-bar text-slate-300"></i>
-                        </div>
-                        <div class="space-y-5 flex-1" id="area-distribution-container">
-                            <div class="text-slate-500 text-sm text-center py-10 italic">Klik tombol Sinkronisasi untuk memuat analitik visual.</div>
-                        </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">Jumlah Pesanan (Kg)</label>
+                    <div class="relative">
+                        <input type="number" id="input-kg" required min="0.1" step="0.1" placeholder="Contoh: 1.5" 
+                            class="w-full pl-4 pr-12 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all text-lg font-medium">
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">Kg</span>
                     </div>
-
-                    <!-- Strategic Alert & Info -->
-                    <div class="bg-brand-900 rounded-xl shadow-md p-6 text-white relative overflow-hidden flex flex-col justify-center">
-                        <!-- BG Accent Pattern -->
-                        <div class="absolute -right-10 -bottom-10 opacity-10 transform rotate-12">
-                            <i class="fas fa-shield-alt text-9xl"></i>
-                        </div>
-                        <div class="relative z-10">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-accent-500 p-2 rounded-lg mr-3">
-                                    <i class="fas fa-lightbulb text-white"></i>
-                                </div>
-                                <h3 class="text-lg font-bold">Catatan Strategis</h3>
-                            </div>
-                            <p class="text-sm text-brand-100 leading-relaxed opacity-90 mb-4">
-                                Data diagregasi langsung dari *Google Sheets* regional. Pengelompokan data berdasarkan *Kanca Induk* telah dioptimalkan untuk performa query dan akurasi *filtering*.
-                            </p>
-                            <div class="p-3 bg-brand-800 rounded-lg border border-brand-700 text-xs text-brand-50">
-                                <i class="fas fa-info-circle text-accent-500 mr-1"></i> Gunakan tab <strong>Data Kebutuhan</strong> untuk detail per Unit Kerja.
-                            </div>
-                        </div>
-                    </div>
+                    <p class="text-xs text-slate-500 mt-1">Bisa menggunakan desimal (misal: 0.5 untuk setengah kilo)</p>
                 </div>
-            </div>
 
-            <!-- Tab: Data Kebutuhan -->
-            <div id="tab-data" class="tab-content hidden animate-fade-in space-y-4">
-                
-                <!-- Filter Section -->
-                <div class="flex flex-col lg:flex-row justify-between items-center gap-4 bg-white p-5 rounded-xl shadow-sm border border-slate-100 animate-slide-up">
-                    <div class="flex flex-col sm:flex-row flex-1 gap-4 w-full">
-                        <!-- Dropdown Kanca Induk -->
-                        <div class="relative w-full sm:w-72">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <i class="fas fa-building text-brand-500"></i>
-                            </div>
-                            <select id="kanca-filter" onchange="filterTableData()" class="w-full pl-12 pr-10 py-2.5 border-2 border-slate-100 hover:border-brand-300 rounded-lg focus:outline-none focus:ring-0 focus:border-brand-500 appearance-none bg-slate-50 text-slate-700 font-semibold text-sm transition-colors cursor-pointer">
-                                <option value="ALL">Seluruh Kanca Induk</option>
-                                <!-- Injected via JS -->
-                            </select>
-                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                <i class="fas fa-chevron-down text-slate-400 text-xs"></i>
-                            </div>
-                        </div>
-                        
-                        <!-- Search Bar -->
-                        <div class="relative w-full sm:w-80">
-                            <i class="fas fa-search absolute left-4 top-3.5 text-slate-400"></i>
-                            <input type="text" id="search-input" onkeyup="filterTableData()" placeholder="Cari Unit Kerja atau Deskripsi..." class="w-full pl-12 pr-4 py-2.5 border-2 border-slate-100 rounded-lg focus:outline-none focus:border-brand-500 bg-white text-sm transition-colors">
-                        </div>
+                <div class="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                    <p class="text-sm font-semibold text-orange-800 mb-1">Total Harga Kripik:</p>
+                    <p class="text-2xl font-bold text-orange-600" id="preview-price">Rp 0</p>
+                </div>
+
+                <button type="submit" 
+                    class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 md:py-3.5 rounded-lg shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex justify-center items-center gap-2">
+                    <i class="ph ph-floppy-disk text-lg"></i> Simpan Pesanan
+                </button>
+            </form>
+        </aside>
+
+        <!-- PANEL REKAP & TABEL DAFTAR PESANAN -->
+        <section class="flex-1 bg-slate-50 p-4 sm:p-6 flex flex-col min-w-0 md:overflow-hidden" id="export-target">
+            
+            <!-- SUMMARY KESELURUHAN PENGIRIMAN (BATCH) -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-5 mb-5 md:mb-6 flex-none">
+                <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i class="ph ph-truck text-lg text-blue-500"></i> Rekap Tagihan Pengiriman (Batch)
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 items-end">
+                    <!-- Total Harga Kripik -->
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                        <p class="text-xs font-semibold text-slate-500 mb-1">Total Harga Kripik</p>
+                        <p class="text-lg font-bold text-slate-800" id="summary-kripik">Rp 0</p>
                     </div>
                     
-                    <div class="flex space-x-3 w-full lg:w-auto">
-                        <button onclick="exportToCSV()" class="px-5 py-2.5 bg-brand-50 text-brand-700 border border-brand-200 rounded-lg hover:bg-brand-100 hover:border-brand-300 text-sm font-bold transition-colors w-full lg:w-auto flex justify-center items-center">
-                            <i class="fas fa-file-csv mr-2"></i> Ekspor CSV
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Modern Line Chart Container -->
-                <div id="kanca-chart-container" class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 hidden animate-slide-up">
-                    <div class="flex justify-between items-center mb-6">
-                        <div class="flex items-center">
-                            <div class="w-2 h-8 bg-accent-500 rounded-full mr-3"></div>
-                            <h3 class="text-lg font-bold text-brand-900" id="kanca-chart-title">Tren Kebutuhan Spesifik</h3>
+                    <!-- Input Ongkos Kirim Global -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Ongkos Kirim (Sekali Jalan)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">Rp</span>
+                            <input type="number" id="input-global-ongkir" min="0" placeholder="0" 
+                                class="w-full pl-9 pr-3 py-2 bg-white border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all text-lg font-bold text-blue-700 shadow-sm">
                         </div>
-                        <span class="px-3 py-1 bg-brand-50 border border-brand-100 text-brand-600 text-xs font-bold rounded-full flex items-center">
-                            <i class="fas fa-chart-line mr-1"></i> Analitik Aktif
-                        </span>
                     </div>
-                    <div class="relative h-72 w-full">
-                        <canvas id="kancaLineChart"></canvas>
-                    </div>
-                </div>
 
-                <!-- Data Table -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden animate-slide-up" style="animation-delay: 0.1s;">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse" id="data-table">
-                            <thead>
-                                <tr class="bg-brand-900 text-white text-xs uppercase tracking-wider">
-                                    <th class="p-4 font-semibold w-16 text-center">No</th>
-                                    <th class="p-4 font-semibold">Unit Kerja</th>
-                                    <th class="p-4 font-semibold">Kanca Induk</th>
-                                    <th class="p-4 font-semibold text-center w-32">Kebutuhan</th>
-                                    <th class="p-4 font-semibold text-center w-24">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-sm divide-y divide-slate-100 text-slate-700" id="table-body">
-                                <tr>
-                                    <td colspan="5" class="p-10 text-center text-slate-500 bg-slate-50">
-                                        <div class="flex flex-col items-center justify-center">
-                                            <i class="fas fa-folder-open text-4xl text-slate-300 mb-3"></i>
-                                            <p>Data belum tersedia. Klik Sinkronisasi di sudut kanan atas.</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs font-medium text-slate-500">
-                        <span id="showing-text">Menampilkan 0 entri data</span>
+                    <!-- Grand Total Tagihan -->
+                    <div class="bg-orange-50 p-3 rounded-lg border border-orange-200 sm:col-span-2 md:col-span-1">
+                        <p class="text-xs font-semibold text-orange-800 mb-1"> Total Tagihan</p>
+                        <p class="text-xl font-black text-orange-600" id="summary-grand-total">Rp 0</p>
                     </div>
                 </div>
             </div>
 
-        </div>
+            <!-- Header Tabel -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 flex-none gap-3">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="ph ph-list-bullets text-orange-600"></i> Riwayat Pesanan
+                </h2>
+                <div class="flex flex-wrap sm:flex-nowrap gap-2 action-col w-full sm:w-auto">
+                    <button id="btn-export" onclick="exportToPNG()" class="flex-1 sm:flex-none justify-center text-sm bg-blue-600 hover:bg-blue-700 text-white font-semibold flex items-center gap-2 px-4 py-2.5 sm:py-2 rounded-lg transition-colors shadow-sm">
+                        <i class="ph ph-image"></i> Simpan PNG
+                    </button>
+                    <button onclick="clearAllData()" class="flex-1 sm:flex-none justify-center text-sm text-red-600 bg-red-50 sm:bg-transparent hover:text-red-700 font-semibold flex items-center gap-1 px-3 py-2.5 sm:py-1.5 rounded border border-red-100 sm:border-none hover:bg-red-100 sm:hover:bg-red-50 transition-colors">
+                        <i class="ph ph-trash"></i> Hapus Semua
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabel Wrapper -->
+            <div class="md:flex-1 overflow-x-auto md:overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-sm relative min-h-[300px] md:min-h-0">
+                <table class="w-full text-left border-collapse min-w-[500px]">
+                    <thead class="bg-slate-50 sticky top-0 border-b border-slate-200 z-10 shadow-sm md:shadow-none">
+                        <tr>
+                            <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tanggal</th>
+                            <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Pelanggan</th>
+                            <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Berat (Kg)</th>
+                            <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Harga Kripik</th>
+                            <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
+                            <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center action-col">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-table-body" class="divide-y divide-slate-100">
+                        <!-- Data akan dirender di sini via JavaScript -->
+                    </tbody>
+                </table>
+                
+                <!-- State Kosong -->
+                <div id="empty-state" class="hidden absolute inset-0 bg-white flex-col items-center justify-center text-slate-400 z-20">
+                    <i class="ph ph-notebook text-6xl mb-4 opacity-50"></i>
+                    <p class="text-slate-500 font-medium">Belum ada pesanan tercatat.</p>
+                </div>
+            </div>
+        </section>
+
     </main>
 
-    <!-- Detail Modal -->
-    <div id="detail-modal" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-11/12 max-w-3xl max-h-[90vh] flex flex-col transform scale-95 transition-transform duration-300" id="modal-content">
-            <!-- Modal Header -->
-            <div class="p-6 border-b border-slate-100 flex justify-between items-start bg-brand-900 text-white rounded-t-2xl relative overflow-hidden">
-                <div class="absolute -right-4 -bottom-4 opacity-10">
-                    <i class="fas fa-building text-8xl"></i>
-                </div>
-                <div class="relative z-10">
-                    <div class="text-xs font-bold text-accent-500 uppercase tracking-wider mb-1 flex items-center" id="modal-kanca-name">
-                        <i class="fas fa-sitemap mr-2"></i> Kanca Induk
-                    </div>
-                    <h2 class="text-2xl font-black" id="modal-unit-name">Detail Unit</h2>
-                </div>
-                <button onclick="closeModal()" class="text-white/70 hover:text-white transition-colors relative z-10 bg-white/10 hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center">
-                    <i class="fas fa-times"></i>
-                </button>
+    <!-- WADAH TEMPLATE LAPORAN TERSEMBUNYI (Khusus Ekspor PNG) -->
+    <!-- Diletakkan jauh di luar layar agar tidak merusak UI interaktif -->
+    <div id="hidden-report-container" class="fixed top-[-9999px] left-[-9999px] w-[1000px] bg-white text-slate-800 p-12 z-[-50]">
+        
+        <!-- Header Laporan Modern -->
+        <div class="flex justify-between items-end border-b-4 border-orange-600 pb-6 mb-8">
+            <div>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                    <i class="ph ph-fire text-orange-600"></i> BUKU PESANAN KRIPIK
+                </h1>
+                <p class="text-slate-500 mt-2 font-medium">Rekapitulasi Penjualan & Pengiriman</p>
             </div>
-            
-            <!-- Modal Body -->
-            <div class="p-6 overflow-y-auto flex-1 bg-slate-50">
-                <div class="mb-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Rincian Titik Kamera</div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3" id="modal-details-grid">
-                    <!-- Injected via JS -->
-                </div>
-                
-                <div class="mt-6 bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-                    <div class="bg-slate-100 p-3 border-b border-slate-200 flex items-center">
-                        <i class="fas fa-sticky-note text-brand-500 mr-2"></i>
-                        <h4 class="text-xs font-bold text-slate-700 uppercase">Keterangan / Catatan</h4>
-                    </div>
-                    <div class="p-4">
-                        <p class="text-sm text-slate-600 leading-relaxed" id="modal-keterangan">-</p>
-                    </div>
-                </div>
+            <div class="text-right">
+                <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-1">Tanggal Ekspor</p>
+                <p class="text-lg font-bold text-slate-800" id="report-date"></p>
             </div>
-            
-            <!-- Modal Footer -->
-            <div class="p-5 border-t border-slate-200 bg-white rounded-b-2xl flex justify-between items-center">
-                <div class="flex items-center text-brand-900 font-bold">
-                    <span class="text-xs text-slate-500 mr-2 font-normal">Total Estimasi:</span>
-                    <span id="modal-total-bawah" class="text-xl">0</span> <span class="text-xs ml-1">Kamera</span>
-                </div>
-                <button onclick="closeModal()" class="px-6 py-2 bg-brand-900 text-white rounded-lg hover:bg-brand-800 font-bold transition-colors shadow-sm">Tutup</button>
+        </div>
+
+        <!-- Ringkasan Eksekutif (Summary) -->
+        <div class="grid grid-cols-4 gap-4 mb-10">
+            <div class="bg-slate-50 p-4 border-l-4 border-slate-300 rounded-r-lg">
+                <p class="text-xs font-bold text-slate-500 uppercase">Total Volume</p>
+                <p class="text-xl font-black text-slate-800 mt-1" id="report-summary-kg">0 Kg</p>
             </div>
+            <div class="bg-slate-50 p-4 border-l-4 border-blue-400 rounded-r-lg">
+                <p class="text-xs font-bold text-slate-500 uppercase">Pendapatan Kripik</p>
+                <p class="text-xl font-black text-slate-800 mt-1" id="report-summary-kripik">Rp 0</p>
+            </div>
+            <div class="bg-slate-50 p-4 border-l-4 border-purple-400 rounded-r-lg">
+                <p class="text-xs font-bold text-slate-500 uppercase">Ongkos Kirim</p>
+                <p class="text-xl font-black text-slate-800 mt-1" id="report-summary-ongkir">Rp 0</p>
+            </div>
+            <div class="bg-orange-50 p-4 border-l-4 border-orange-500 rounded-r-lg">
+                <p class="text-xs font-bold text-orange-800 uppercase">Grand Total</p>
+                <p class="text-xl font-black text-orange-600 mt-1" id="report-summary-grand">Rp 0</p>
+            </div>
+        </div>
+
+        <!-- Tabel Laporan Utuh -->
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-800 text-white">
+                <tr>
+                    <th class="py-3 px-4 text-xs font-bold uppercase tracking-wider rounded-tl-lg">Tanggal</th>
+                    <th class="py-3 px-4 text-xs font-bold uppercase tracking-wider">Pelanggan</th>
+                    <th class="py-3 px-4 text-xs font-bold uppercase tracking-wider text-right">Berat (Kg)</th>
+                    <th class="py-3 px-4 text-xs font-bold uppercase tracking-wider text-right">Harga Kripik</th>
+                    <th class="py-3 px-4 text-xs font-bold uppercase tracking-wider text-center rounded-tr-lg border-l border-slate-600">Sudah Diterima</th>
+                </tr>
+            </thead>
+            <tbody id="report-table-body" class="divide-y divide-slate-200">
+                <!-- Data Laporan Dirender via JS -->
+            </tbody>
+        </table>
+        
+        <div class="mt-8 text-center text-sm font-semibold text-slate-400">
+            ~ Dokumen dihasilkan otomatis oleh Sistem Kasir Pintar ~
         </div>
     </div>
 
-    <!-- Application Logic -->
+    <!-- LOGIKA JAVASCRIPT -->
     <script>
-        // State Management
-        let appData = [];
-        let chartInstance = null; 
-        let isSidebarOpen = true; // State for Collapsible Sidebar
+        // --- KONFIGURASI BISNIS ---
+        const HARGA_PER_KG = 50000;
         
-        // =========================================================================
-        // PENGATURAN SISTEM (HARDCODED)
-        // =========================================================================
-        const gasEndpoint = 'https://script.google.com/macros/s/AKfycbwmNvboksDwzcDziOtL5Ar3-PUiWduwzN0qX6_hgcOP9l_l_8JGrRjPrej5BZIP4d00/exec'; 
-        
-        // Initialize App
-        document.addEventListener('DOMContentLoaded', () => {
-            if (gasEndpoint) {
-                if(appData.length === 0) fetchData();
-            } else {
-                showNotification('Error Kritis', 'Sistem gagal memuat URL Endpoint.', 'error');
-            }
+        // --- MANAJEMEN STATE (Menggunakan LocalStorage) ---
+        let orders = JSON.parse(localStorage.getItem('kripik_orders_data')) || [];
+        let globalOngkir = parseFloat(localStorage.getItem('kripik_global_ongkir')) || 0;
 
-            // Handle responsive sidebar on load
-            if(window.innerWidth < 1024) {
-                toggleSidebar(); // Auto minimize on smaller screens
-            }
+        // Set initial ongkir input value
+        document.getElementById('input-global-ongkir').value = globalOngkir || '';
+
+        // --- UTILITIES FORMATTING ---
+        const formatRp = (angka) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        };
+
+        const formatDate = (isoString) => {
+            const date = new Date(isoString);
+            return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+        };
+
+        // --- LOGIKA UTAMA ---
+
+        // 1. Menyimpan data ke Local Storage
+        const saveData = () => {
+            localStorage.setItem('kripik_orders_data', JSON.stringify(orders));
+            localStorage.setItem('kripik_global_ongkir', globalOngkir);
+            renderUI();
+        };
+
+        // 2. Menambah Pesanan Baru
+        document.getElementById('order-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('input-name').value.trim();
+            const kg = parseFloat(document.getElementById('input-kg').value);
+            
+            if (!name || isNaN(kg) || kg <= 0) return;
+
+            const basePrice = kg * HARGA_PER_KG;
+            const newOrder = {
+                id: Date.now().toString(),
+                date: new Date().toISOString(),
+                customerName: name,
+                weightKg: kg,
+                totalPrice: basePrice, // Harga kripik saja
+                status: 'Belum Diterima' // Default status
+            };
+
+            orders.unshift(newOrder); // Masukkan di paling atas
+            saveData();
+
+            // Reset form
+            this.reset();
+            document.getElementById('preview-price').innerText = "Rp 0";
+            document.getElementById('input-name').focus();
         });
 
-        // Sidebar Toggle Logic
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const toggleIcon = document.getElementById('toggle-icon');
+        // 3. Pratinjau Harga Real-time saat mengetik jumlah Kg
+        const updatePreviewPrice = () => {
+            const kg = parseFloat(document.getElementById('input-kg').value) || 0;
+            const previewEl = document.getElementById('preview-price');
             
-            if (isSidebarOpen) {
-                // Minimize
-                sidebar.classList.remove('w-64');
-                sidebar.classList.add('w-20', 'sidebar-minimized');
-                toggleIcon.classList.replace('fa-chevron-left', 'fa-chevron-right');
+            if (kg > 0) {
+                previewEl.innerText = formatRp(kg * HARGA_PER_KG);
             } else {
-                // Expand
-                sidebar.classList.remove('w-20', 'sidebar-minimized');
-                sidebar.classList.add('w-64');
-                toggleIcon.classList.replace('fa-chevron-right', 'fa-chevron-left');
+                previewEl.innerText = "Rp 0";
             }
-            isSidebarOpen = !isSidebarOpen;
+        };
+        document.getElementById('input-kg').addEventListener('input', updatePreviewPrice);
 
-            // Trigger Chart Resize after CSS transition completes
-            setTimeout(() => {
-                if(chartInstance) {
-                    chartInstance.resize();
-                }
-            }, 300);
-        }
+        // 4. Update Ongkir Global secara Real-time
+        document.getElementById('input-global-ongkir').addEventListener('input', function(e) {
+            globalOngkir = parseFloat(e.target.value) || 0;
+            saveData();
+        });
 
-        // Tab Navigation
-        function switchTab(tabId) {
-            // Update UI Nav
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                // Reset styling
-                btn.classList.remove('active', 'bg-brand-800', 'border-accent-500', 'text-white');
-                btn.classList.add('border-transparent', 'text-slate-300');
-                
-                // Reset icon color
-                const icon = btn.querySelector('i');
-                if(icon) icon.classList.remove('text-accent-500');
-            });
-
-            // Set Active Styling
-            const activeBtn = document.getElementById(`nav-${tabId}`);
-            activeBtn.classList.remove('border-transparent', 'text-slate-300');
-            activeBtn.classList.add('active', 'bg-brand-800', 'border-accent-500', 'text-white');
-            const activeIcon = activeBtn.querySelector('i');
-            if(activeIcon) activeIcon.classList.add('text-accent-500');
-
-            // Hide all contents
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.add('hidden');
-                // Retrigger animation
-                content.classList.remove('animate-fade-in');
-            });
-
-            // Show selected
-            const targetContent = document.getElementById(`tab-${tabId}`);
-            targetContent.classList.remove('hidden');
-            // Force reflow to restart animation
-            void targetContent.offsetWidth;
-            targetContent.classList.add('animate-fade-in');
-
-            // Set Title
-            const titles = {
-                'dashboard': 'Dashboard Analitik',
-                'data': 'Basis Data Kebutuhan'
-            };
-            document.getElementById('page-title').innerText = titles[tabId];
-            
-            // Re-render chart if navigating to Data
-            if(tabId === 'data') {
-                filterTableData();
+        // 5. Menghapus Pesanan Spesifik
+        const deleteOrder = (id) => {
+            if(confirm("Hapus data pesanan ini?")) {
+                orders = orders.filter(order => order.id !== id);
+                saveData();
             }
-        }
+        };
 
-        // Fetch Data from GAS
-        async function fetchData() {
-            if (!gasEndpoint) {
-                showNotification('Error', 'URL Backend tidak ditemukan pada sistem.', 'error');
-                return;
+        // 6. Menghapus Seluruh Data
+        const clearAllData = () => {
+            if(orders.length === 0 && globalOngkir === 0) return;
+            if(confirm("PERINGATAN: Anda yakin ingin menghapus SELURUH riwayat pesanan dan ongkir? Data tidak dapat dikembalikan.")) {
+                orders = [];
+                globalOngkir = 0;
+                document.getElementById('input-global-ongkir').value = '';
+                saveData();
             }
+        };
 
-            const syncIcon = document.getElementById('sync-icon');
-            const loadingState = document.getElementById('loading-state');
+        // 7. Update Antarmuka Pengguna (Tabel & Statistik)
+        const renderUI = () => {
+            const tbody = document.getElementById('order-table-body');
+            const emptyState = document.getElementById('empty-state');
             
-            syncIcon.classList.add('fa-spin');
-            loadingState.classList.remove('hidden');
-            loadingState.style.opacity = '1';
-
-            try {
-                const response = await fetch(gasEndpoint, {
-                    method: 'GET',
-                    headers: { 'Accept': 'application/json' }
-                });
-                
-                if (!response.ok) throw new Error('Network response was not ok');
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    // MENGHITUNG ULANG TOTAL
-                    appData = result.data.map(row => {
-                        const total = [
-                            row.AreaParkir, row.BankingHall, row.RuangTeller, row.RuangCS,
-                            row.RuangKluis, row.RuangOpnameKas, row.RuangSDB, row.BackOffice,
-                            row.PintuMasuk, row.RuangServer, row.ServiceArea, row.MeeterGreeter,
-                            row.EChannel, row.OfficeHour, row.Lounge
-                        ].reduce((sum, val) => sum + (parseInt(val) || 0), 0);
-                        
-                        row.TotalKebutuhan = total;
-                        return row;
-                    });
-                    
-                    processDashboardData();
-                    populateKancaDropdown(); 
-                    filterTableData();       
-                    
-                    const now = new Date();
-                    document.getElementById('kpi-last-sync').innerText = now.toLocaleTimeString('id-ID') + ' WIB';
-                    showNotification('Sinkronisasi Sukses', `${appData.length} baris data berhasil divalidasi.`, 'success');
-                } else {
-                    throw new Error(result.message || 'Unknown error from server');
-                }
-            } catch (error) {
-                console.error('Fetch Error:', error);
-                showNotification('Gagal Sinkronisasi', 'Pastikan koneksi internet stabil dan akses URL terbuka.', 'error');
-            } finally {
-                syncIcon.classList.remove('fa-spin');
-                // Smooth hide loading
-                loadingState.style.opacity = '0';
-                setTimeout(() => { loadingState.classList.add('hidden'); }, 300);
-            }
-        }
-
-        // Populate Dropdown Filter Kanca
-        function populateKancaDropdown() {
-            const select = document.getElementById('kanca-filter');
-            const kancaSet = new Set();
-            
-            appData.forEach(row => {
-                if(row.KancaInduk && row.KancaInduk.trim() !== "") {
-                    kancaSet.add(row.KancaInduk.trim());
-                }
-            });
-
-            select.innerHTML = '<option value="ALL">Seluruh Kanca Induk</option>';
-            Array.from(kancaSet).sort().forEach(kanca => {
-                select.innerHTML += `<option value="${kanca}">${kanca}</option>`;
-            });
-        }
-
-        // Process Data for Dashboard KPI
-        function processDashboardData() {
-            if (!appData.length) return;
-
-            let totalKamera = 0;
-            const unitSet = new Set();
-            const kancaSet = new Set();
-            
-            const areaAggregates = {
-                'Area Parkir': 0, 'Banking Hall': 0, 'Ruang Teller': 0, 'Ruang CS': 0,
-                'Ruang Kluis': 0, 'Ruang Opname': 0, 'Ruang SDB': 0, 'Back Office': 0,
-                'Pintu Masuk': 0, 'Ruang Server': 0, 'Service Area': 0, 'Meeter Greeter': 0,
-                'E-Channel': 0, 'Office Hour': 0, 'Lounge': 0
-            };
-
-            appData.forEach(row => {
-                totalKamera += parseInt(row.TotalKebutuhan) || 0;
-                if(row.UnitKerja) unitSet.add(row.UnitKerja);
-                if(row.KancaInduk) kancaSet.add(row.KancaInduk);
-
-                areaAggregates['Area Parkir'] += parseInt(row.AreaParkir) || 0;
-                areaAggregates['Banking Hall'] += parseInt(row.BankingHall) || 0;
-                areaAggregates['Ruang Teller'] += parseInt(row.RuangTeller) || 0;
-                areaAggregates['Ruang CS'] += parseInt(row.RuangCS) || 0;
-                areaAggregates['Ruang Kluis'] += parseInt(row.RuangKluis) || 0;
-                areaAggregates['Ruang Opname'] += parseInt(row.RuangOpnameKas) || 0;
-                areaAggregates['Ruang SDB'] += parseInt(row.RuangSDB) || 0;
-                areaAggregates['Back Office'] += parseInt(row.BackOffice) || 0;
-                areaAggregates['Pintu Masuk'] += parseInt(row.PintuMasuk) || 0;
-                areaAggregates['Ruang Server'] += parseInt(row.RuangServer) || 0;
-                areaAggregates['Service Area'] += parseInt(row.ServiceArea) || 0;
-                areaAggregates['Meeter Greeter'] += parseInt(row.MeeterGreeter) || 0;
-                areaAggregates['E-Channel'] += parseInt(row.EChannel) || 0;
-                areaAggregates['Office Hour'] += parseInt(row.OfficeHour) || 0;
-                areaAggregates['Lounge'] += parseInt(row.Lounge) || 0;
-            });
-
-            animateValue('kpi-total-kamera', 0, totalKamera, 1500);
-            animateValue('kpi-total-unit', 0, unitSet.size, 1000);
-            animateValue('kpi-total-kanca', 0, kancaSet.size, 1000);
-
-            const sortedAreas = Object.entries(areaAggregates)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5); 
-
-            const maxVal = sortedAreas[0][1] || 1; 
-            const container = document.getElementById('area-distribution-container');
-            container.innerHTML = '';
-
-            sortedAreas.forEach(item => {
-                const percentage = Math.round((item[1] / maxVal) * 100);
-                const barHtml = `
-                    <div class="flex items-center group">
-                        <div class="w-1/3 text-sm font-bold text-slate-700 truncate pr-3 group-hover:text-brand-600 transition-colors">${item[0]}</div>
-                        <div class="w-2/3 flex items-center">
-                            <div class="w-full bg-slate-100 rounded-full h-4 mr-3 overflow-hidden shadow-inner">
-                                <div class="bg-gradient-to-r from-brand-500 to-brand-400 h-4 rounded-full transition-all duration-1000 relative" style="width: 0%" data-target="${percentage}%">
-                                    <div class="absolute inset-0 bg-white opacity-20 w-full animate-pulse"></div>
-                                </div>
-                            </div>
-                            <span class="text-sm font-black text-brand-900 w-10 text-right">${item[1]}</span>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += barHtml;
-            });
-
-            setTimeout(() => {
-                container.querySelectorAll('.bg-gradient-to-r').forEach(bar => {
-                    bar.style.width = bar.getAttribute('data-target');
-                });
-            }, 100);
-        }
-
-        // Master Filter System 
-        function filterTableData() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const selectedKanca = document.getElementById('kanca-filter').value;
-
-            const filteredData = appData.filter(row => {
-                const unit = (row.UnitKerja || '').toLowerCase();
-                const kanca = (row.KancaInduk || '').toLowerCase();
-                const desc = (row.Keterangan || '').toLowerCase();
-                
-                const matchesSearch = unit.includes(query) || kanca.includes(query) || desc.includes(query);
-                const matchesKanca = selectedKanca === 'ALL' || row.KancaInduk === selectedKanca;
-
-                return matchesSearch && matchesKanca;
-            });
-
-            renderTable(filteredData);
-            renderKancaChart(selectedKanca, filteredData);
-        }
-
-        // Render Table Logic
-        function renderTable(data) {
-            const tbody = document.getElementById('table-body');
+            // Reset Table
             tbody.innerHTML = '';
 
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-slate-500 bg-slate-50">Tidak ada data yang sesuai filter.</td></tr>`;
-                document.getElementById('showing-text').innerText = 'Menampilkan 0 entri data';
-                return;
+            let totalKg = 0;
+            let totalKripikRevenue = 0;
+
+            if (orders.length === 0) {
+                emptyState.style.display = 'flex';
+            } else {
+                emptyState.style.display = 'none';
+
+                orders.forEach(order => {
+                    // Proteksi untuk data lama: paksa hitung ulang harga dasar kripik murni (menghilangkan ongkir lama jika ada)
+                    const baseKripikPrice = order.weightKg * HARGA_PER_KG;
+                    const currentStatus = order.status || 'Belum Diterima';
+                    
+                    totalKg += order.weightKg;
+                    totalKripikRevenue += baseKripikPrice;
+
+                    // Logika Visual Badge Status
+                    const statusBadge = currentStatus === 'Sudah Diterima' 
+                        ? `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold cursor-pointer hover:bg-emerald-200 transition-colors shadow-sm" onclick="toggleStatus('${order.id}')"><i class="ph ph-check-circle mr-1"></i>Sudah Diterima</span>`
+                        : `<span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold cursor-pointer hover:bg-amber-200 transition-colors shadow-sm" onclick="toggleStatus('${order.id}')"><i class="ph ph-clock mr-1"></i>Belum Diterima</span>`;
+
+                    // Render Baris
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition-colors group";
+                    tr.innerHTML = `
+                        <td class="py-3 px-4 text-sm text-slate-500 whitespace-nowrap">${formatDate(order.date)}</td>
+                        <td class="py-3 px-4 text-sm font-semibold text-slate-800">${order.customerName}</td>
+                        <td class="py-3 px-4 text-sm text-slate-700 text-right"><span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-medium">${order.weightKg} Kg</span></td>
+                        <td class="py-3 px-4 text-sm font-bold text-slate-800 text-right">
+                            ${formatRp(baseKripikPrice)}
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            ${statusBadge}
+                        </td>
+                        <td class="py-3 px-4 text-center action-col">
+                            <button onclick="deleteOrder('${order.id}')" class="text-slate-400 hover:text-red-500 transition-colors p-1 rounded-md hover:bg-red-50" title="Hapus Pesanan">
+                                <i class="ph ph-trash text-lg"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
             }
 
-            data.forEach((row, index) => {
-                const originalIndex = appData.indexOf(row);
+            // Update Statistik Dashboard & Rekap
+            document.getElementById('stat-total-kg').innerText = `${totalKg.toLocaleString('id-ID')} Kg`;
+            document.getElementById('summary-kripik').innerText = formatRp(totalKripikRevenue);
+            
+            // Grand Total (Kripik + 1x Ongkir Global)
+            const grandTotal = totalKripikRevenue + globalOngkir;
+            document.getElementById('summary-grand-total').innerText = formatRp(grandTotal);
+        };
+
+        // 8. Toggle Status Pesanan
+        const toggleStatus = (id) => {
+            const index = orders.findIndex(o => o.id === id);
+            if (index !== -1) {
+                const currentStatus = orders[index].status || 'Belum Diterima';
+                orders[index].status = currentStatus === 'Belum Diterima' ? 'Sudah Diterima' : 'Belum Diterima';
+                saveData(); // Simpan perubahan state
+            }
+        };
+
+        // 9. Render Data ke Template Laporan
+        const renderReportTemplate = () => {
+            let totalKg = 0;
+            let totalKripikRevenue = 0;
+            const reportTbody = document.getElementById('report-table-body');
+            reportTbody.innerHTML = '';
+
+            document.getElementById('report-date').innerText = new Date().toLocaleString('id-ID');
+
+            orders.forEach((order, index) => {
+                const baseKripikPrice = order.weightKg * HARGA_PER_KG;
+                
+                totalKg += order.weightKg;
+                totalKripikRevenue += baseKripikPrice;
+
+                // Latar belakang baris selang-seling (zebra striping)
+                const bgClass = index % 2 === 0 ? 'bg-white' : 'bg-slate-50';
+                
+                // Render baris dengan kotak centang (checklist) fisik khusus untuk dicetak
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-brand-50 transition-colors cursor-pointer group";
-                
-                tr.onclick = (e) => {
-                    if(!e.target.closest('button')) openModal(originalIndex);
-                };
-
+                tr.className = bgClass;
                 tr.innerHTML = `
-                    <td class="p-4 border-b border-slate-100 text-center font-medium text-slate-400">
-                        ${index + 1}
-                    </td>
-                    <td class="p-4 border-b border-slate-100">
-                        <div class="font-bold text-brand-900 group-hover:text-brand-600 transition-colors">${row.UnitKerja || '-'}</div>
-                        <div class="text-xs text-slate-400 mt-1"><i class="fas fa-file-alt mr-1"></i> ${row.Sheet || '-'}</div>
-                    </td>
-                    <td class="p-4 border-b border-slate-100 font-medium">${row.KancaInduk || '-'}</td>
-                    <td class="p-4 border-b border-slate-100 text-center">
-                        <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent-50 text-accent-600 font-black text-lg border border-accent-100 group-hover:bg-accent-500 group-hover:text-white transition-colors">
-                            ${row.TotalKebutuhan || 0}
-                        </div>
-                    </td>
-                    <td class="p-4 border-b border-slate-100 text-center">
-                        <button onclick="event.stopPropagation(); openModal(${originalIndex})" class="text-brand-500 hover:text-white hover:bg-brand-500 p-2 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-300">
-                            <i class="fas fa-external-link-alt"></i>
-                        </button>
+                    <td class="py-4 px-4 text-sm text-slate-600 whitespace-nowrap border-b border-slate-200">${formatDate(order.date)}</td>
+                    <td class="py-4 px-4 text-sm font-bold text-slate-800 border-b border-slate-200">${order.customerName}</td>
+                    <td class="py-4 px-4 text-sm text-slate-700 text-right border-b border-slate-200">${order.weightKg}</td>
+                    <td class="py-4 px-4 text-sm font-bold text-slate-800 text-right border-b border-slate-200">${formatRp(baseKripikPrice)}</td>
+                    <td class="py-4 px-4 border-b border-slate-200 border-l border-slate-300">
+                        <div class="w-6 h-6 border-2 border-slate-400 mx-auto rounded-sm bg-white shadow-inner"></div>
                     </td>
                 `;
-                tbody.appendChild(tr);
+                reportTbody.appendChild(tr);
             });
-            
-            document.getElementById('showing-text').innerText = `Menampilkan ${data.length} entri data dari total ${appData.length}`;
-        }
 
-        // Render Modern Line Chart (BRI Theme)
-        function renderKancaChart(kancaName, filteredData) {
-            const container = document.getElementById('kanca-chart-container');
-            const title = document.getElementById('kanca-chart-title');
-            
-            if (kancaName === 'ALL' || filteredData.length === 0) {
-                container.classList.add('hidden');
-                if (chartInstance) {
-                    chartInstance.destroy();
-                    chartInstance = null;
-                }
-                return;
-            }
+            const grandTotal = totalKripikRevenue + globalOngkir;
 
-            container.classList.remove('hidden');
-            title.innerHTML = `Distribusi Spesifik Kanca: <span class="text-accent-500">${kancaName}</span>`;
+            document.getElementById('report-summary-kg').innerText = `${totalKg.toLocaleString('id-ID')} Kg`;
+            document.getElementById('report-summary-kripik').innerText = formatRp(totalKripikRevenue);
+            document.getElementById('report-summary-ongkir').innerText = formatRp(globalOngkir);
+            document.getElementById('report-summary-grand').innerText = formatRp(grandTotal);
+        };
 
-            const ctx = document.getElementById('kancaLineChart').getContext('2d');
-            
-            const chartData = [...filteredData].sort((a,b) => b.TotalKebutuhan - a.TotalKebutuhan);
-            const labels = chartData.map(d => d.UnitKerja || 'Unknown');
-            const dataPoints = chartData.map(d => parseInt(d.TotalKebutuhan) || 0);
+        // 10. Ekspor ke PNG Kualitas HD dengan Template Khusus
+        const exportToPNG = async () => {
+            const btn = document.getElementById('btn-export');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> Memproses...';
+            btn.disabled = true;
 
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
+            try {
+                // Siapkan data terbaru ke dalam template tersembunyi
+                renderReportTemplate();
 
-            // Create Gradient Fill
-            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(11, 86, 166, 0.2)'); // Brand 500 light
-            gradient.addColorStop(1, 'rgba(11, 86, 166, 0)');
-
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Kebutuhan Kamera',
-                        data: dataPoints,
-                        borderColor: '#0B56A6', // BRI Blue
-                        backgroundColor: gradient,
-                        borderWidth: 3,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#F37021', // BRI Orange
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 8,
-                        pointHoverBackgroundColor: '#F37021',
-                        pointHoverBorderColor: '#ffffff',
-                        pointHoverBorderWidth: 3,
-                        fill: true,
-                        tension: 0.4 // Smooth curves
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#031c36', // Brand 900
-                            titleColor: '#ffffff',
-                            bodyColor: '#ffffff',
-                            padding: 12,
-                            titleFont: { size: 14, family: 'sans-serif' },
-                            bodyFont: { size: 14, family: 'sans-serif', weight: 'bold' },
-                            borderColor: '#F37021', // Accent
-                            borderWidth: 1,
-                            displayColors: false,
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.parsed.y} Unit Kamera Disetujui`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#f1f5f9', drawBorder: false },
-                            ticks: { 
-                                stepSize: 1, 
-                                color: '#64748b',
-                                font: { weight: 'bold' }
-                            }
-                        },
-                        x: {
-                            grid: { display: false, drawBorder: false },
-                            ticks: { 
-                                color: '#64748b',
-                                maxRotation: 45,
-                                minRotation: 45, // Lock rotation for clean look
-                                autoSkip: true,
-                                maxTicksLimit: 15
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Modal Logic
-        function openModal(dataIndexOrObj) {
-            const data = typeof dataIndexOrObj === 'number' ? appData[dataIndexOrObj] : dataIndexOrObj;
-            if(!data) return;
-
-            document.getElementById('modal-unit-name').innerText = data.UnitKerja || 'Unit Tidak Diketahui';
-            document.getElementById('modal-kanca-name').innerHTML = `<i class="fas fa-sitemap mr-2"></i> ${data.KancaInduk || '-'}`;
-            document.getElementById('modal-keterangan').innerText = data.Keterangan || 'Tidak ada catatan tambahan untuk unit ini.';
-            document.getElementById('modal-total-bawah').innerText = data.TotalKebutuhan || 0;
-
-            const fields = [
-                { label: 'Area Parkir', val: data.AreaParkir, icon: 'fa-car' },
-                { label: 'Banking Hall', val: data.BankingHall, icon: 'fa-users' },
-                { label: 'Ruang Teller', val: data.RuangTeller, icon: 'fa-money-bill-wave' },
-                { label: 'Ruang CS', val: data.RuangCS, icon: 'fa-headset' },
-                { label: 'Ruang Kluis', val: data.RuangKluis, icon: 'fa-vault' },
-                { label: 'Opname Kas', val: data.RuangOpnameKas, icon: 'fa-coins' },
-                { label: 'Ruang SDB', val: data.RuangSDB, icon: 'fa-box-open' },
-                { label: 'Back Office', val: data.BackOffice, icon: 'fa-briefcase' },
-                { label: 'Pintu Masuk', val: data.PintuMasuk, icon: 'fa-door-open' },
-                { label: 'Ruang Server', val: data.RuangServer, icon: 'fa-server' },
-                { label: 'Service Area', val: data.ServiceArea, icon: 'fa-tools' },
-                { label: 'Meeter Greeter', val: data.MeeterGreeter, icon: 'fa-user-tie' },
-                { label: 'E-Channel', val: data.EChannel, icon: 'fa-desktop' },
-                { label: 'Office Hour', val: data.OfficeHour, icon: 'fa-clock' },
-                { label: 'Lounge', val: data.Lounge, icon: 'fa-couch' }
-            ];
-
-            const grid = document.getElementById('modal-details-grid');
-            grid.innerHTML = '';
-            
-            fields.forEach(field => {
-                const value = parseInt(field.val);
-                const hasValue = !isNaN(value) && value > 0;
+                const targetElement = document.getElementById('hidden-report-container');
                 
-                // Tema warna badge jika ada value vs tidak ada
-                const bgClass = hasValue ? 'bg-white border-brand-200 shadow-sm' : 'bg-slate-50 border-slate-100 opacity-70';
-                const iconColor = hasValue ? 'text-accent-500' : 'text-slate-300';
-                const textClass = hasValue ? 'text-brand-900 font-bold text-lg' : 'text-slate-400 text-sm font-medium';
-                const displayValue = hasValue ? value : '-';
+                // Proses Canvas
+                const canvas = await html2canvas(targetElement, {
+                    scale: 2, // Skala 2 cukup untuk HD tanpa menghabiskan memori browser
+                    backgroundColor: '#ffffff',
+                    windowWidth: 1000, // Paksa lebar render agar tidak terpengaruh layar perangkat
+                    onclone: (clonedDoc) => {
+                        // Pastikan elemen terlihat oleh html2canvas saat di-clone
+                        const clonedContainer = clonedDoc.getElementById('hidden-report-container');
+                        clonedContainer.style.position = 'relative';
+                        clonedContainer.style.top = '0';
+                        clonedContainer.style.left = '0';
+                    }
+                });
 
-                grid.innerHTML += `
-                    <div class="border rounded-xl p-3 flex flex-col justify-center items-center text-center transition-all ${bgClass}">
-                        <i class="fas ${field.icon} ${iconColor} text-lg mb-2"></i>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide mb-1 leading-tight">${field.label}</span>
-                        <span class="${textClass}">${displayValue}</span>
-                    </div>
-                `;
-            });
-
-            const modal = document.getElementById('detail-modal');
-            const content = document.getElementById('modal-content');
-            
-            modal.classList.remove('hidden');
-            void modal.offsetWidth; // Force reflow
-            
-            modal.classList.remove('opacity-0');
-            content.classList.remove('scale-95');
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('detail-modal');
-            const content = document.getElementById('modal-content');
-            
-            modal.classList.add('opacity-0');
-            content.classList.add('scale-95');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        }
-
-        // Export to CSV
-        function exportToCSV() {
-            if(!appData.length) return showNotification('Gagal', 'Tidak ada data untuk diekspor', 'warning');
-            
-            const headers = ["Sheet_Sumber", "Unit_Kerja", "Kanca_Induk", "Total_Kebutuhan", "Area_Parkir", "Banking_Hall", "Ruang_Teller", "Ruang_CS", "Ruang_Kluis", "Ruang_Opname", "Ruang_SDB", "Back_Office", "Pintu_Masuk", "Ruang_Server", "Service_Area", "Meeter_Greeter", "EChannel", "Office_Hour", "Lounge", "Keterangan"];
-            
-            let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
-
-            appData.forEach(row => {
-                const rowData = [
-                    row.Sheet || '', row.UnitKerja || '', row.KancaInduk || '', row.TotalKebutuhan || 0,
-                    row.AreaParkir || 0, row.BankingHall || 0, row.RuangTeller || 0, row.RuangCS || 0,
-                    row.RuangKluis || 0, row.RuangOpnameKas || 0, row.RuangSDB || 0, row.BackOffice || 0,
-                    row.PintuMasuk || 0, row.RuangServer || 0, row.ServiceArea || 0, row.MeeterGreeter || 0,
-                    row.EChannel || 0, row.OfficeHour || 0, row.Lounge || 0, 
-                    `"${(row.Keterangan || '').replace(/"/g, '""')}"` 
-                ];
-                csvContent += rowData.join(",") + "\n";
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `Rekap_CCTV_BRI_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // Utility: Animate Number
-        function animateValue(id, start, end, duration) {
-            if (start === end) {
-                document.getElementById(id).innerHTML = end;
-                return;
+                // Unduh Otomatis
+                const link = document.createElement('a');
+                link.download = `Laporan_Kripik_HD_${new Date().toISOString().slice(0,10)}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+            } catch (error) {
+                alert('Gagal membuat gambar PNG. Pastikan browser Anda mendukung fitur ini.');
+                console.error(error);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                // easeOutQuart
-                const ease = 1 - Math.pow(1 - progress, 4);
-                document.getElementById(id).innerHTML = Math.floor(ease * (end - start) + start);
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                } else {
-                    document.getElementById(id).innerHTML = end;
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
+        };
 
-        // Notification System
-        function showNotification(title, message, type = 'info') {
-            const id = 'notif-' + Math.random().toString(36).substr(2, 9);
-            const bgColors = {
-                'success': 'bg-emerald-50 border-emerald-500 text-emerald-900',
-                'error': 'bg-red-50 border-red-500 text-red-900',
-                'warning': 'bg-amber-50 border-amber-500 text-amber-900',
-                'info': 'bg-brand-50 border-brand-500 text-brand-900'
-            };
-            const icons = {
-                'success': 'fa-check-circle text-emerald-500',
-                'error': 'fa-times-circle text-red-500',
-                'warning': 'fa-exclamation-triangle text-amber-500',
-                'info': 'fa-info-circle text-brand-500'
-            };
-
-            const notifHtml = `
-                <div id="${id}" class="fixed bottom-6 right-6 max-w-sm w-full shadow-2xl rounded-xl border-l-4 p-4 transform translate-y-20 opacity-0 transition-all duration-400 z-50 ${bgColors[type]} flex items-start">
-                    <i class="fas ${icons[type]} mt-0.5 mr-3 text-xl"></i>
-                    <div>
-                        <h4 class="font-bold text-sm tracking-wide">${title}</h4>
-                        <p class="text-xs mt-1 font-medium opacity-80">${message}</p>
-                    </div>
-                    <button onclick="document.getElementById('${id}').remove()" class="ml-auto text-slate-400 hover:text-slate-800 transition-colors focus:outline-none">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', notifHtml);
-            
-            const el = document.getElementById(id);
-            setTimeout(() => {
-                el.classList.remove('translate-y-20', 'opacity-0');
-            }, 10);
-
-            setTimeout(() => {
-                if(el) {
-                    el.classList.add('translate-y-20', 'opacity-0');
-                    setTimeout(() => el.remove(), 300);
-                }
-            }, 5000);
-        }
+        // --- INISIALISASI AWAL ---
+        renderUI();
 
     </script>
 </body>
